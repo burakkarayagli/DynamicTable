@@ -4,6 +4,9 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import Button from "@mui/material/Button";
 import { Add, BorderAll } from "@mui/icons-material";
+import { useState } from "react";
+import FormulaModal from "./components/FormulaModal";
+import { Backdrop } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,32 +15,25 @@ function randomHexColor() {
 }
 
 export default function Home() {
+    const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
+
+    function openFormulaModal() {
+        setIsFormulaModalOpen(true);
+    }
+    
+    function closeFormulaModal(e) {
+        console.log(e.target.id)
+        if (e.target.id === "formula-modal" || e.target.parentNode.id === "close-button") {
+            setIsFormulaModalOpen(false);
+        }
+        
+    }
+
     return (
         <>
-            <Button
-                endIcon={<Add style={
-                    {
-                        //make bolder
-                        fontWeight: "bold",
-                        //make bigger
-                        fontSize: "200%",
-                        //make color random
-                        color: randomHexColor(),
-                    }
-                }/>}
-                style={{
-                    border: "1px solid",
-                    borderRadius: "5px",
-                    borderColor: "#5390d9",
-                    backgroundColor: "#80ffdb",
-                    marginTop: "20px",
-                    marginLeft: "20px",
-                    fontSize: "150%",
-                }}
-                size="large"
-            >
-                Add
-            </Button>
+            <Button className= "mt-2 ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none" id="addButton" onClick={openFormulaModal}>ADD</Button>
+            {isFormulaModalOpen && <FormulaModal closeModal={closeFormulaModal}/>}
+            {isFormulaModalOpen && <Backdrop />}
         </>
     );
 }
