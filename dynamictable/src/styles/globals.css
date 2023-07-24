@@ -13,3 +13,40 @@
   padding: 8px 12px;
   transition: all 0.2s ease-in-out;
 }
+
+.bfm-table-container {
+    margin: 20px;
+    border: 1px solid #ccc; 
+}
+
+.input-column {
+    border: 0.5px solid;
+    border-color: green;
+    margin : 1px;
+    padding-inline: 5px;
+    width: 10%;
+}
+
+.output-column {
+    border: 0.5px solid;
+    border-color: gray;
+    margin : 1px;
+    padding-inline:5px;
+    width: 10%;
+}
+
+.column-container {
+    display: flex;
+}
+
+.data-cell {
+    border: 0.5px solid;
+    margin: 1px;
+    padding-inline:5px;
+    width:10%;
+    height:25px;
+}
+
+.data-container {
+    display: flex;
+}
