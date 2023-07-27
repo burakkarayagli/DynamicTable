@@ -12,7 +12,14 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({
+        bfm_name: "bfm1",
+        input_columns: ["a", "b", "c"],
+        output_columns: ["d", "e", "f"],
+    });
+
+
+
 
     function openFormulaModal() {
         setIsFormulaModalOpen(true);
@@ -58,6 +65,8 @@ export default function Home() {
             input_columns: columns[0],
             output_columns: columns[1],
         };
+
+        
 
         setData(bfm_data);
         setIsFormulaModalOpen(false);

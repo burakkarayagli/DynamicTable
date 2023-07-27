@@ -50,3 +50,56 @@
 .data-container {
     display: flex;
 }
+
+.bfm-header {
+    text-align: center;
+    margin-top: 5px;
+}
+
+.grid-row {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    padding-left: 5px;
+    padding-right: 5px;
+
+}
+
+.data-cell-input {
+    border: 0.5px solid;
+    padding-inline:5px;
+    user-select: none;
+    height: 30px;
+    flex: 1;
+}
+
+.data-cell-input:focus {
+    outline: none;
+}
+
+.column-cell {
+    border: 0.5px solid;
+    padding-inline:5px;
+    user-select: none;
+    height: 30px;
+    flex: 1;
+}
+
+.empty-add-row {
+    flex:1;
+    text-align: center;
+    border: 0.5px solid;
+}
+
+.empty-add-row:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.data-row {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
