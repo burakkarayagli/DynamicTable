@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 function InputBoxes(props) {
 
     function addNewInput(e) {
-        console.log(props);
         const columns = document.getElementById(props.type);
       
         // Create container for input and remove button

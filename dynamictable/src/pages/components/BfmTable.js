@@ -3,9 +3,13 @@ import { Divider } from "@mui/material";
 import ColumnCell from "./ColumnCell";
 import EmptyAddRow from "./EmptyAddRow";
 import DataRow from "./DataRow";
+import axios from "axios";
+
+
+const baseURL = "http://localhost:8080";
 
 function BfmTable(props) {
-    const { bfm_name, input_columns, output_columns } = props;
+    const {bfm_name, input_columns, output_columns, value, index, id} = props;
 
     const columns = [...input_columns, ...output_columns];
 
@@ -33,7 +37,6 @@ function BfmTable(props) {
         );
         // You can also do any additional logic here to save the row data to a database or perform other actions.
         // For now, I'm just printing the updated data to the console as an example.
-        console.log("Updated Row Data:", rowData);
     };
 
     const [rows, setRows] = useState([
@@ -47,7 +50,6 @@ function BfmTable(props) {
     
 
     function addRow() {
-        console.log("add row");
         setRows((prevRows) => [
             ...prevRows,
             <DataRow
@@ -56,8 +58,13 @@ function BfmTable(props) {
             />,
         ]);
 
-        console.log(rows);
     }
+
+    function deleteTable() {
+        axios.delete(baseURL + "/api/deleteTableById/" + id).then((response) => {
+        });
+    }
+
     
     function getRowData() {
         var rowData = [];
@@ -74,16 +81,21 @@ function BfmTable(props) {
             rowData.push(cellData);
         }
         
-        console.log(rowData);
+        
+
+        
         return rowData;
     }
 
 
 
     return (
-        <div>
-            <h1 className="bfm-header">{bfm_name}</h1>
-            <Divider variant="middle" style={{ margin: 10 }} />
+
+
+
+        <div hidden= {
+            value !== index
+        }>
             <div className="row-container" id="row-container">
                 <div className="grid-row">
                     {input_columns.map((column, index) => (
@@ -97,14 +109,18 @@ function BfmTable(props) {
                         <ColumnCell key={index} column={column} />
                     ))}
                 </div>
-                {rows}
+                {rows}  
                 <div className="grid-row">
                     <EmptyAddRow addRow={addRow} />
                 </div>
             </div>
             <button onClick={getRowData}>Get Row Data</button>
+            <Divider />
+            <button onClick={deleteTable} style={{backgroundColor: "red"}}> Delete Table</button>
         </div>
     );
 }
 
 export default BfmTable;
+
+

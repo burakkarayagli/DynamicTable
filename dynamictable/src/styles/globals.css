@@ -86,7 +86,7 @@
 }
 
 .empty-add-row {
-    flex:1;
+    flex: 1;
     text-align: center;
     border: 0.5px solid;
 }
@@ -102,4 +102,12 @@
     width:100%;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.data-row:nth-child(even) .data-cell-input {
+    background-color: #CCCCCC; /* Change this color to your desired green color */
+  }
+
+.row-container {
+    padding-top: 8px;
 }
