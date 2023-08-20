@@ -16,11 +16,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
-    const [data, setData] = useState({});
     const [tables, setTables] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // const [data, setData] = useState({});
 
     function openFormulaModal() {
         setIsFormulaModalOpen(true);
@@ -69,8 +67,8 @@ export default function Home() {
         axios
             .post(baseURL + "/api/createTable", bfm_data)
             .then((response) => {
-                // Add the new bfm to the list of bfms
-                console.log(response.data)
+                console.log("This is the response: ", response.data);
+                
                 setTables((prevTables) => [...prevTables, response.data]);
             })
             .catch((error) => {
@@ -78,9 +76,14 @@ export default function Home() {
                 // Handle the error here, display a message, or take appropriate action
             });
 
-        setData(bfm_data);
         setIsFormulaModalOpen(false);
     }
+
+    const handleTableDelete = (deletedTableName) => {
+        setTables((prevTables) =>
+            prevTables.filter((table) => table.tableName !== deletedTableName)
+        );
+    };
 
     const [tabIndex, setTabIndex] = useState(0);
     function handleTabChange(e, newValue) {
@@ -98,23 +101,15 @@ export default function Home() {
 
     useEffect(() => {
         axios.get(baseURL + "/api/getAllTableInfo").then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             setTables(response.data);
+            console.log("useeffect data", response.data);
             setIsLoading(false);
         });
-    }, []);
+    },[]);
 
     return (
         <div>
-            {/* <div>
-                <Button
-                    className="mt-2 ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none"
-                    id="addButton"
-                    onClick={openFormulaModal}
-                >
-                    ADD
-                </Button>
-            </div> */}
             {isFormulaModalOpen && (
                 <FormulaModal
                     closeModal={closeFormulaModal}
@@ -132,20 +127,21 @@ export default function Home() {
                             className="tabs-container"
                         >
                             {tables.map((table, index) => (
-                                <Tab label={table.tableName} />
+                                <Tab key={table.tableName} label={table.tableName} />
                             ))}
                             <Tab icon={<AddIcon/>} onClick={openFormulaModal} className="addButton" id="addButton"/>
                         </Tabs>
                     </Box>
                     {tables.map((table, index) => (
-                        console.log(table.tableName),
+                        // console.log(table.tableName),
                         <BfmTable
                             index={index}
                             value={tabIndex}
                             className="bfm-table"
+                            id = {table.tableName}
                             bfm_name={table.tableName}
-                            input_columns={table.columnNames}
-                            output_columns={table.columnNames}
+                            columns={table.columnNames}
+                            deleteTableCallback={handleTableDelete}
                         />
                     ))}
                 </div>

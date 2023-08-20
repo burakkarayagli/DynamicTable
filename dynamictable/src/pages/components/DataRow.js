@@ -1,23 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 
 function DataRow(props) {
-    var cellCount = props.cellCount;
-
-    const [rowData, setRowData] = useState(new Array(cellCount).fill(""));
+    const {data} = props;
     
+    const [tableData, settableData] = useState(data);
+
     function handleCellChange(e, index) {
-        const newRowData = [...rowData];
-        newRowData[index] = e.target.value;
-        setRowData(newRowData);
+        const newtableData = [...tableData];
+        newtableData[index] = e.target.value;
+        settableData(newtableData);
     }
 
     const createCells = () => {
-        return rowData.map((value, index) => (
+        return tableData.map((value, index) => (
             <input 
-                key={index}
                 type="text"
                 className="data-cell-input"
-                value={value}
+                value={value ? value:" "}
                 onChange={(e) => handleCellChange(e, index)}
             />
         ));
