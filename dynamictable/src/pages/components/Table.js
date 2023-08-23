@@ -7,18 +7,16 @@ import axios from "axios";
 
 const baseURL = "http://localhost:8080";
 
-function BfmTable(props) {
-    const { bfm_name, columns, value, index, id } = props;
-    console.log("this is table columns:", columns);
+function Table(props) {
+    const { name, columns, value, index, id } = props;
+
     const handletableDataChange = (tableData) => {
-        // Assuming that each row has a unique identifier (e.g., ID) that you can use to identify rows in a more sophisticated app
-        // For this example, I'm using the index of the row in the `rows` state array as a makeshift ID
         setRows((prevRows) =>
             prevRows.map((prevRow, index) => {
                 if (index === prevRows.length - 1) {
-                    // If it's the last row (the row with the new changes), return the updated row data
                     return (
                         <DataRow
+                            key={index}
                             cellCount={columns.length}
                             onSavetableData={handletableDataChange}
                         />
@@ -47,45 +45,56 @@ function BfmTable(props) {
     }
 
     const handleDeleteClick = () => {
-        const { bfm_name, deleteTableCallback } = props;
+        const { name, deleteTableCallback } = props;
 
         axios
-            .delete(baseURL + "/api/deleteTableByName/" + bfm_name)
+            .delete(baseURL + "/api/deleteTableByName/" + name)
             .then((response) => {
                 console.log(response.data);
                 // Call the callback function to update the tables state in the parent component
                 if (deleteTableCallback) {
-                    deleteTableCallback(bfm_name);
+                    deleteTableCallback(name);
                 }
             });
     };
 
     function fetchTableData() {
-        axios
-            .get(baseURL + "/api/getTableByName/" + bfm_name)
-            .then((response) => {
-                var data = response.data.tableData;
-                //update rows with data without previous rows
+        axios.get(baseURL + "/api/getTableByName/" + name).then((response) => {
+            var data = response.data.tableData;
+            //update rows with data without previous rows
+            if (data.length > 0) {
                 setRows(
                     data.map((row, index) => (
-
                         <DataRow
+                            key={index}
                             cellCount={columns.length}
                             onSavetableData={handletableDataChange}
                             //remove the first element of the row because it is the row id
-                            data={row.slice(1)}
+                            data={row}
                         />
                     ))
                 );
-            });
+            } else {
+                setRows([
+                    <DataRow
+                        key={0}
+                        cellCount={columns.length}
+                        onSavetableData={handletableDataChange}
+                        data={Array(columns.length).fill("")}
+                    />,
+                ]);
+            }
+        });
     }
 
     useEffect(() => {
+        console.log("Before fetch table:", name, rows);
         fetchTableData();
+        console.log("After fetch table:", name, rows);
     }, []);
 
     function getTableData() {
-        var tableName = bfm_name;
+        var tableName = name;
         var tableData = [];
         var rowContainer = document.getElementById(id);
         var rows = rowContainer.getElementsByClassName("data-row");
@@ -122,7 +131,7 @@ function BfmTable(props) {
                         //If column starts with in_ then it is an input column
                         //If column starts with out_ then it is an output column
                         columns.map((column, index) =>
-                        //column.startswith but ignore case
+                            //column.startswith but ignore case
 
                             column.toLowerCase().startsWith("in_") ? (
                                 <ColumnCell
@@ -139,30 +148,18 @@ function BfmTable(props) {
                         )
                     }
                 </div>
-                {rows.length === 0 ? (
-                        <DataRow
-                            cellCount={columns.length}
-                            onSavetableData={handletableDataChange}
-                            data={Array(columns.length).fill("")}
-                        />
-                ) : (
-                    rows
-                )}
+                {rows}
                 <div className="grid-row">
                     <EmptyAddRow addRow={addRow} />
                 </div>
             </div>
-            <button onClick={savetableData}>Get Row Data</button>
-            <Divider />
-            <button
-                onClick={handleDeleteClick}
-                style={{ backgroundColor: "red" }}
-            >
-                {" "}
-                Delete Table
+            <button onClick={savetableData} className="save-button">
+                Save Data
             </button>
+            <Divider />
+            <button onClick={handleDeleteClick}> Delete Table</button>
         </div>
     );
 }
 
-export default BfmTable;
+export default Table;

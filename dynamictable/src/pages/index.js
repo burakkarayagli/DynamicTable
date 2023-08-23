@@ -1,23 +1,45 @@
-import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import Button from "@mui/material/Button";
-import { Add, BorderAll } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import FormulaModal from "./components/FormulaModal";
-import BfmTable from "./components/BfmTable";
+import Table from "./components/Table";
 import axios from "axios";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
 const baseURL = "http://localhost:8080";
+const notificationTime = 3000;
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+
+    useEffect(() => {
+        getAllTables();
+    },[]);
+
+    //Boolean to check if the formula modal is open
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
+    //Array of tables
     const [tables, setTables] = useState([]);
+    //Boolean to check if the page is loading
     const [isLoading, setIsLoading] = useState(true);
+
+    const [notifications, setNotifications] = useState({
+        message: "",
+        type: "",
+    }); // [ {message: "hello", type: "success"}, {message: "hello", type: "error"}
+
+    function showNotification(message, type) {
+        setNotifications({ message, type });
+        setTimeout(() => {
+            setNotifications({ message: "", type: "" });
+        }, notificationTime);
+    }
+
+    function hideNotification() {
+        setNotifications({ message: "", type: "" });
+    }
+    
+
 
 
     function openFormulaModal() {
@@ -85,6 +107,7 @@ export default function Home() {
         );
     };
 
+    //Tabs
     const [tabIndex, setTabIndex] = useState(0);
     function handleTabChange(e, newValue) {
         if (tables.length === 0) {
@@ -99,14 +122,16 @@ export default function Home() {
         }
     }
 
-    useEffect(() => {
+    function getAllTables() {
         axios.get(baseURL + "/api/getAllTableInfo").then((response) => {
-            // console.log(response.data);
             setTables(response.data);
             console.log("useeffect data", response.data);
             setIsLoading(false);
         });
-    },[]);
+    }
+
+
+    
 
     return (
         <div>
@@ -119,7 +144,7 @@ export default function Home() {
             {isLoading ? (
                 <div>Loading...</div>
             ) : (
-                <div className="bfm-table-container">
+                <div className="table-container">
                     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                         <Tabs
                             value={tabIndex}
@@ -134,12 +159,13 @@ export default function Home() {
                     </Box>
                     {tables.map((table, index) => (
                         // console.log(table.tableName),
-                        <BfmTable
+                        <Table
+                            key = {table.tableName}
                             index={index}
                             value={tabIndex}
-                            className="bfm-table"
+                            className="table"
                             id = {table.tableName}
-                            bfm_name={table.tableName}
+                            name={table.tableName}
                             columns={table.columnNames}
                             deleteTableCallback={handleTableDelete}
                         />

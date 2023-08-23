@@ -14,7 +14,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.bfm-table-container {
+.table-container {
     margin: 20px;
     border: 1px solid #ccc; 
 }
@@ -110,4 +110,18 @@
 
 .row-container {
     padding-top: 8px;
+}
+
+
+.save-button{
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+    margin-left: 20px;    
 }

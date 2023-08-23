@@ -8,6 +8,7 @@ public class TableInfo {
 
     public TableInfo(String tableName, List<String> columnNames) {
         this.tableName = tableName;
+        //Remove the first column name, which is the id
         this.columnNames = columnNames;
     }
 
@@ -30,7 +31,7 @@ public class TableInfo {
 
     @Override
     public String toString() {
-        return "TableInfo{" +
+        return "{" +
                 "tableName='" + tableName + '\'' +
                 ", columnNames=" + columnNames +
                 '}';

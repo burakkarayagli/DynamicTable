@@ -14,6 +14,7 @@ function DataRow(props) {
     const createCells = () => {
         return tableData.map((value, index) => (
             <input 
+                key={index}
                 type="text"
                 className="data-cell-input"
                 value={value ? value:" "}
