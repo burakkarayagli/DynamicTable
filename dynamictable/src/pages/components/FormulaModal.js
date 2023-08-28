@@ -2,7 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import InputBoxes from "./InputBoxes";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
-import { TextFieldsOutlined } from "@mui/icons-material";
+import { StringConstants } from "@/constants/StringConstants";
 
 function FormulaModal(props) {
     return (
@@ -18,7 +18,7 @@ function FormulaModal(props) {
                 <div className="p-4 flex justify-between">
                     <div className="w-72">
                         <div className="relative h-10 w-full min-w-[200px]">
-                            <TextField id="bfm-name" label="Outlined" variant="outlined" />
+                            <TextField id="bfm-name" label={StringConstants.TABLE_NAME} variant= "outlined"/>
                         </div>
                     </div>
                     <button
@@ -34,7 +34,7 @@ function FormulaModal(props) {
                         id="input-columns-header"
                         className="h-[355px] text-center bg-gray-100 shadow-md shadow-gray-500 rounded-xl p-3"
                     >
-                        <h5>INPUT COLUMNS</h5>
+                        <h5>{StringConstants.INPUT_COLUMNS}</h5>
                         <div
                             id="input-columns"
                             className="flex-col flex justify-start"
@@ -46,7 +46,7 @@ function FormulaModal(props) {
                         id="output-columns-header"
                         className="h-[355px] text-center bg-gray-100 shadow-md shadow-gray-500 rounded-xl p-3"
                     >
-                        <h5>OUTPUT COLUMNS</h5>
+                        <h5>{StringConstants.OUTPUT_COLUMNS}</h5>
                         <div
                             id="output-columns"
                             className="flex-col flex justify-start"
@@ -62,7 +62,7 @@ function FormulaModal(props) {
                         className="bg-green-600 mr-2"
                         onClick={props.createButton}
                     >
-                        Create
+                        {StringConstants.FORMULA_MODAL_CREATE_BUTTON}
                     </Button>
                     <Button
                         id = "cancel-button"
@@ -70,7 +70,7 @@ function FormulaModal(props) {
                         color="error"
                         className="bg-red-600"
                     >
-                        Cancel
+                        {StringConstants.FORMULA_MODAL_CANCEL_BUTTON}
                     </Button>
                 </div>
             </div>

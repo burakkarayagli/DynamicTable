@@ -3,18 +3,17 @@ import { useEffect, useState } from "react";
 import FormulaModal from "./components/FormulaModal";
 import Table from "./components/Table";
 import axios from "axios";
-import { Box, Tab, Tabs} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Box, Tab, Tabs } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { EndpointConstants } from "@/constants/EndpointConstants";
 
-const baseURL = "http://localhost:8080";
 const notificationTime = 3000;
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-
     useEffect(() => {
         getAllTables();
-    },[]);
+    }, []);
 
     //Boolean to check if the formula modal is open
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
@@ -38,9 +37,6 @@ export default function Home() {
     function hideNotification() {
         setNotifications({ message: "", type: "" });
     }
-    
-
-
 
     function openFormulaModal() {
         setIsFormulaModalOpen(true);
@@ -87,10 +83,10 @@ export default function Home() {
         };
 
         axios
-            .post(baseURL + "/api/createTable", bfm_data)
+            .post(EndpointConstants.CREATE_TABLE, bfm_data)
             .then((response) => {
                 console.log("This is the response: ", response.data);
-                
+
                 setTables((prevTables) => [...prevTables, response.data]);
             })
             .catch((error) => {
@@ -123,15 +119,33 @@ export default function Home() {
     }
 
     function getAllTables() {
-        axios.get(baseURL + "/api/getAllTableInfo").then((response) => {
+        axios.get(EndpointConstants.GET_ALL_TABLES).then((response) => {
             setTables(response.data);
             console.log("useeffect data", response.data);
             setIsLoading(false);
+            console.log(EndpointConstants.baseURL);
         });
     }
 
+    const [file, setFile] = useState(null);
 
-    
+    function handleFileChange(e) {
+        setFile(e.target.files[0]);
+    }
+
+
+    function importFromExcel() {
+        //Post file to server
+        const formData = new FormData();
+        formData.append("file", file);
+        axios.post(EndpointConstants.IMPORT_FROM_EXCEL, formData).then((response) => {
+            setTables((prevTables) => [...prevTables, response.data]);
+        }
+        ).catch((error) => {
+            console.error("Failed to import from excel:", error);
+            // Handle the error here, display a message, or take appropriate action
+        });
+    }
 
     return (
         <div>
@@ -152,19 +166,27 @@ export default function Home() {
                             className="tabs-container"
                         >
                             {tables.map((table, index) => (
-                                <Tab key={table.tableName} label={table.tableName} />
+                                <Tab
+                                    key={table.tableName}
+                                    label={table.tableName}
+                                />
                             ))}
-                            <Tab icon={<AddIcon/>} onClick={openFormulaModal} className="addButton" id="addButton"/>
+                            <Tab
+                                icon={<AddIcon />}
+                                onClick={openFormulaModal}
+                                className="addButton"
+                                id="addButton"
+                            />
                         </Tabs>
                     </Box>
                     {tables.map((table, index) => (
                         // console.log(table.tableName),
                         <Table
-                            key = {table.tableName}
+                            key={table.tableName}
                             index={index}
                             value={tabIndex}
                             className="table"
-                            id = {table.tableName}
+                            id={table.tableName}
                             name={table.tableName}
                             columns={table.columnNames}
                             deleteTableCallback={handleTableDelete}
@@ -172,6 +194,10 @@ export default function Home() {
                     ))}
                 </div>
             )}
+            <div>
+                <input type="file" onChange={handleFileChange} accept=".xlsx"></input>
+                <button onClick={importFromExcel}>Import</button>
+            </div>
         </div>
     );
 }

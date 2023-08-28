@@ -1,4 +1,4 @@
-package com.example.dynamictablebackend;
+package com.example.dynamictablebackend.responses;
 
 import java.util.List;
 

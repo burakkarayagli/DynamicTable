@@ -4,8 +4,9 @@ import ColumnCell from "./ColumnCell";
 import EmptyAddRow from "./EmptyAddRow";
 import DataRow from "./DataRow";
 import axios from "axios";
+import { EndpointConstants } from "@/constants/EndpointConstants";
+import { StringConstants } from "@/constants/StringConstants";
 
-const baseURL = "http://localhost:8080";
 
 function Table(props) {
     const { name, columns, value, index, id } = props;
@@ -48,7 +49,7 @@ function Table(props) {
         const { name, deleteTableCallback } = props;
 
         axios
-            .delete(baseURL + "/api/deleteTableByName/" + name)
+            .delete(EndpointConstants.DELETE_TABLE_BY_NAME + name)
             .then((response) => {
                 console.log(response.data);
                 // Call the callback function to update the tables state in the parent component
@@ -59,7 +60,7 @@ function Table(props) {
     };
 
     function fetchTableData() {
-        axios.get(baseURL + "/api/getTableByName/" + name).then((response) => {
+        axios.get(EndpointConstants.GET_TABLE_BY_NAME + name).then((response) => {
             var data = response.data.tableData;
             //update rows with data without previous rows
             if (data.length > 0) {
@@ -118,10 +119,13 @@ function Table(props) {
     function savetableData() {
         var data = getTableData();
         console.log(data);
-        axios.post(baseURL + "/api/saveTable", data).then((response) => {
+        axios.post(EndpointConstants.SAVE_TABLE_DATA, data).then((response) => {
             console.log(response.data);
         });
     }
+
+   
+
 
     return (
         <div hidden={value !== index}>
@@ -154,10 +158,12 @@ function Table(props) {
                 </div>
             </div>
             <button onClick={savetableData} className="save-button">
-                Save Data
+                    {StringConstants.SAVE_BUTTON}
             </button>
             <Divider />
             <button onClick={handleDeleteClick}> Delete Table</button>
+            <Divider />
+            
         </div>
     );
 }
