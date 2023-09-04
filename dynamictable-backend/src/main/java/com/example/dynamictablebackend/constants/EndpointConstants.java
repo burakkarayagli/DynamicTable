@@ -10,6 +10,7 @@ public class EndpointConstants {
     public static final String DELETE_TABLE_BY_NAME = "/deleteTableByName";
 
     public static final String IMPORT_FROM_EXCEL = "/importFromExcel";
+    public static final String EXPORT_TO_EXCEL = "/exportToExcel";
 
 
 }

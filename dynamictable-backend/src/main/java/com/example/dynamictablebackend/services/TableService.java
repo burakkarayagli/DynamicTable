@@ -18,9 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +28,6 @@ public class TableService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
 
 
     public TableInfo createTable(String data) {
@@ -76,7 +73,7 @@ public class TableService {
         }
     }
 
-    public  Connection createConnection() throws SQLException {
+    public Connection createConnection() throws SQLException {
         String url = "jdbc:postgresql://localhost:5432/dynamictable";
         String user = "postgres";
         String password = "1234";
@@ -92,7 +89,7 @@ public class TableService {
 
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet tablesResultSet = metaData.getTables(null, null, "%", new String[]{"TABLE"});
-        while(tablesResultSet.next()){
+        while (tablesResultSet.next()) {
             List<String> columnNames = new ArrayList<>();
             String tableName = tablesResultSet.getString("TABLE_NAME");
             ResultSet columnsResultSet = metaData.getColumns(null, null, tableName, null);
@@ -207,12 +204,11 @@ public class TableService {
         for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
             Row row = sheet.getRow(i);
             List<String> rowData = new ArrayList<>();
-            for (int j = 0; j < columns.size() ; j++) {
+            for (int j = 0; j < columns.size(); j++) {
                 String cellValue = dataFormatter.formatCellValue(row.getCell(j));
                 if (cellValue != null) {
                     rowData.add(cellValue);
-                }
-                else {
+                } else {
                     rowData.add("");
                 }
 
@@ -247,6 +243,64 @@ public class TableService {
         }
 
         return new TableInfo(tableName, columns);
+    }
+
+
+    public ByteArrayInputStream exportToExcel(String tableName) {
+        try {
+            Connection connection = createConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet(tableName);
+
+
+            //Write column names
+            Row firstRow = sheet.createRow(0);
+            for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+                String columnName = resultSet.getMetaData().getColumnName(i);
+                if (!columnName.equalsIgnoreCase("id")) {
+                    System.out.println("TableService exportToExcel columnName: " + columnName);
+                    Cell cell = firstRow.createCell(i - 2);
+                    cell.setCellValue(columnName);
+                }
+            }
+
+            //Write table data
+            int rowIndex = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowIndex);
+                for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+                    String columnName = resultSet.getMetaData().getColumnName(i);
+                    if (!columnName.equalsIgnoreCase("id")) {
+                        Object columnValue = resultSet.getObject(i);
+                        Cell cell = row.createCell(i - 2);
+                        if (columnValue != null) {
+                            cell.setCellValue(columnValue.toString());
+                        } else {
+                            cell.setCellValue(""); // Or handle null case as needed
+                        }
+                    }
+                }
+                rowIndex++;
+            }
+
+            //Write workbook to file and return it
+            workbook.write(outputStream);
+            //Save workbook to file
+            FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/" + tableName + ".xlsx");
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+            workbook.close();
+
+            return new ByteArrayInputStream(outputStream.toByteArray());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

@@ -10,4 +10,5 @@ export const EndpointConstants = {
     DELETE_TABLE_BY_NAME: endpoint_base + "/deleteTableByName/",
     SAVE_TABLE_DATA: endpoint_base + "/saveTable",
     IMPORT_FROM_EXCEL: endpoint_base + "/importFromExcel",
+    EXPORT_TO_EXCEL: endpoint_base + "/exportToExcel/",
 }

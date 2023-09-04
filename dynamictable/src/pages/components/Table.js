@@ -7,7 +7,6 @@ import axios from "axios";
 import { EndpointConstants } from "@/constants/EndpointConstants";
 import { StringConstants } from "@/constants/StringConstants";
 
-
 function Table(props) {
     const { name, columns, value, index, id } = props;
 
@@ -60,32 +59,34 @@ function Table(props) {
     };
 
     function fetchTableData() {
-        axios.get(EndpointConstants.GET_TABLE_BY_NAME + name).then((response) => {
-            var data = response.data.tableData;
-            //update rows with data without previous rows
-            if (data.length > 0) {
-                setRows(
-                    data.map((row, index) => (
+        axios
+            .get(EndpointConstants.GET_TABLE_BY_NAME + name)
+            .then((response) => {
+                var data = response.data.tableData;
+                //update rows with data without previous rows
+                if (data.length > 0) {
+                    setRows(
+                        data.map((row, index) => (
+                            <DataRow
+                                key={index}
+                                cellCount={columns.length}
+                                onSavetableData={handletableDataChange}
+                                //remove the first element of the row because it is the row id
+                                data={row}
+                            />
+                        ))
+                    );
+                } else {
+                    setRows([
                         <DataRow
-                            key={index}
+                            key={0}
                             cellCount={columns.length}
                             onSavetableData={handletableDataChange}
-                            //remove the first element of the row because it is the row id
-                            data={row}
-                        />
-                    ))
-                );
-            } else {
-                setRows([
-                    <DataRow
-                        key={0}
-                        cellCount={columns.length}
-                        onSavetableData={handletableDataChange}
-                        data={Array(columns.length).fill("")}
-                    />,
-                ]);
-            }
-        });
+                            data={Array(columns.length).fill("")}
+                        />,
+                    ]);
+                }
+            });
     }
 
     useEffect(() => {
@@ -124,8 +125,32 @@ function Table(props) {
         });
     }
 
-   
+    function handleExportClick() {
+        console.log("Exporting table:", name);
+        axios
+            .get(EndpointConstants.EXPORT_TO_EXCEL + name, {
+                responseType: "blob",
+            })
+            .then((response) => {
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data], {
+                        type: "application/vnd.ms-excel",
+                    })
+                );
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", name + ".xlsx");
+                document.body.appendChild(link);
+                link.click();
 
+                // cleanup
+                link.parentNode.removeChild(link);
+                URL.revokeObjectURL(url);
+            })
+            .catch((error) => {
+                console.error("Failed to export table:", error);
+            });
+    }
 
     return (
         <div hidden={value !== index}>
@@ -158,12 +183,12 @@ function Table(props) {
                 </div>
             </div>
             <button onClick={savetableData} className="save-button">
-                    {StringConstants.SAVE_BUTTON}
+                {StringConstants.SAVE_BUTTON}
             </button>
             <Divider />
             <button onClick={handleDeleteClick}> Delete Table</button>
             <Divider />
-            
+            <button onClick={handleExportClick}> Export Table</button>
         </div>
     );
 }

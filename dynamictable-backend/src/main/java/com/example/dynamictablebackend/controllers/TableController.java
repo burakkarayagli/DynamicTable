@@ -5,6 +5,9 @@ import com.example.dynamictablebackend.services.TableService;
 import com.example.dynamictablebackend.requests.SaveTableDataRequest;
 import com.example.dynamictablebackend.responses.TableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import com.example.dynamictablebackend.constants.EndpointConstants;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
@@ -88,6 +93,23 @@ public class TableController {
     public ResponseEntity<TableInfo> importFromExcel(@RequestParam("file") MultipartFile file) {
         try {
             return ResponseEntity.ok(tableService.importFromExcel(file));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping(path = EndpointConstants.EXPORT_TO_EXCEL + "/{name}")
+    public ResponseEntity<Resource> exportToExcel(@PathVariable String name) {
+        System.out.println("exportToExcel request: " + name);
+        try {
+            ByteArrayInputStream byteArrayInputStream = tableService.exportToExcel(name);
+            InputStreamResource file = new InputStreamResource(byteArrayInputStream);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name + ".xlsx")
+                    .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                    .body(file);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
