@@ -1,5 +1,6 @@
 package com.example.dynamictablebackend.services;
 
+import com.example.dynamictablebackend.kafka.Publisher;
 import com.example.dynamictablebackend.requests.SaveTableDataRequest;
 import com.example.dynamictablebackend.responses.TableInfo;
 import com.example.dynamictablebackend.responses.TableResponse;
@@ -8,10 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.dhatim.fastexcel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +26,12 @@ public class TableService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    private final Publisher publisher;
+
+    public TableService(Publisher publisher) {
+        this.publisher = publisher;
+    }
 
 
     public TableInfo createTable(String data) {
@@ -125,6 +129,9 @@ public class TableService {
 
     public void saveTableData(SaveTableDataRequest request) {
         String tableName = request.getTableName();
+
+        publisher.publish("Table " + tableName + " has been updated");
+
         List<List<String>> tableData = request.getTableData();
 
         String deleteSql = "DELETE FROM " + tableName + ";";

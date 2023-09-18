@@ -31,7 +31,7 @@ public class TableController {
     @PostMapping(path = EndpointConstants.SAVE_TABLE)
     public void saveTable(@RequestBody SaveTableDataRequest request) {
 
-        System.out.println("saveTable request: " + request.getTableName() + " " + request.getTableData());
+        //System.out.println("saveTable request: " + request.getTableName() + " " + request.getTableData());
         tableService.saveTableData(request);
     }
 
