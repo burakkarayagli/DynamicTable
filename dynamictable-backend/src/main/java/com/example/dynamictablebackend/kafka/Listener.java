@@ -1,13 +1,21 @@
 package com.example.dynamictablebackend.kafka;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class Listener {
 
-    @KafkaListener(topics = "test", groupId = "group1", containerFactory = "kafkaListenerContainerFactory")
-    public void consume(String message) {
-        System.out.println("Consumed message: " + message);
+    @Autowired
+    SimpMessagingTemplate template;
+
+    @KafkaListener(id = "kafkaMessageListener", topics = "test", groupId = "group1",
+    containerFactory = "kafkaListenerContainerFactory", autoStartup = "true")
+    public void consume(KafkaMessageDTO message) {
+        System.out.println("Sending with KafkaListener: " + message);
+        template.convertAndSend("/broadcast", message);
     }
+
 }

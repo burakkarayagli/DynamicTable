@@ -9,9 +9,9 @@ public class Publisher {
 
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, KafkaMessageDTO> kafkaTemplate;
 
-    public void publish(String message) {
+    public void publish(KafkaMessageDTO message) {
         kafkaTemplate.send("test", message);
     }
 

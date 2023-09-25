@@ -3,9 +3,14 @@ import { useEffect, useState } from "react";
 import FormulaModal from "./components/FormulaModal";
 import Table from "./components/Table";
 import axios from "axios";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, Button, Snackbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { EndpointConstants } from "@/constants/EndpointConstants";
+import Stomp from "stompjs";
+import SockJS from "sockjs-client";
+
 
 const notificationTime = 3000;
 const inter = Inter({ subsets: ["latin"] });
@@ -13,7 +18,11 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
     useEffect(() => {
         getAllTables();
+        connectToWebsocket();
+
     }, []);
+
+
 
     //Boolean to check if the formula modal is open
     const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
@@ -26,6 +35,9 @@ export default function Home() {
         message: "",
         type: "",
     }); // [ {message: "hello", type: "success"}, {message: "hello", type: "error"}
+
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("This is a snackbar message");
 
     function showNotification(message, type) {
         setNotifications({ message, type });
@@ -85,7 +97,6 @@ export default function Home() {
         axios
             .post(EndpointConstants.CREATE_TABLE, bfm_data)
             .then((response) => {
-                console.log("This is the response: ", response.data);
 
                 setTables((prevTables) => [...prevTables, response.data]);
             })
@@ -121,9 +132,7 @@ export default function Home() {
     function getAllTables() {
         axios.get(EndpointConstants.GET_ALL_TABLES).then((response) => {
             setTables(response.data);
-            console.log("useeffect data", response.data);
             setIsLoading(false);
-            console.log(EndpointConstants.baseURL);
         });
     }
 
@@ -147,8 +156,34 @@ export default function Home() {
         });
     }
 
+    function connectToWebsocket() {
+        // create a new WebSocket connection
+        const socket = new SockJS("http://localhost:8080/broadcasts");
+
+        // create a new STOMP client over the WebSocket connection
+        const stompClient = Stomp.over(socket);
+
+        // connect to the WebSocket endpoint
+        stompClient.connect({}, function (frame) {
+            // subscribe to the "/broadcast" destination
+            stompClient.subscribe("/broadcast", function (message) {
+                //when a message is received, show snackbar
+                console.log("Message received: " + message.body);
+                setSnackbarMessage(message);
+                setIsSnackbarOpen(true);
+            });
+        });
+    }
+
     return (
         <div>
+            <Snackbar
+                open={isSnackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setIsSnackbarOpen(false)}
+                message={snackbarMessage}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            />
             {isFormulaModalOpen && (
                 <FormulaModal
                     closeModal={closeFormulaModal}
@@ -168,8 +203,16 @@ export default function Home() {
                             {tables.map((table, index) => (
                                 <Tab
                                     key={table.tableName}
-                                    label={table.tableName}
+                                    label={
+                                        <div >
+                                            <MoreHorizIcon />
+                                            <MoreVertIcon />
+                                            {table.tableName}
+                                        </div>
+                                    }
+
                                 />
+
                             ))}
                             <Tab
                                 icon={<AddIcon />}
@@ -180,7 +223,6 @@ export default function Home() {
                         </Tabs>
                     </Box>
                     {tables.map((table, index) => (
-                        // console.log(table.tableName),
                         <Table
                             key={table.tableName}
                             index={index}

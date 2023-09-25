@@ -2,6 +2,7 @@ package com.example.dynamictablebackend.services;
 
 import com.example.dynamictablebackend.kafka.Publisher;
 import com.example.dynamictablebackend.requests.SaveTableDataRequest;
+import com.example.dynamictablebackend.kafka.KafkaMessageDTO;
 import com.example.dynamictablebackend.responses.TableInfo;
 import com.example.dynamictablebackend.responses.TableResponse;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +28,8 @@ public class TableService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    private KafkaTemplate<String, KafkaMessageDTO> kafkaTemplate;
     private final Publisher publisher;
 
     public TableService(Publisher publisher) {
@@ -68,6 +71,10 @@ public class TableService {
 
             //Create TableInfo object
             TableInfo tableInfo = new TableInfo(tableName, columnList);
+
+//            KafkaMessage kafkaMessage = new KafkaMessage("Table created successfully", "success");
+//            publisher.publish(kafkaMessage);
+
             return tableInfo;
 
 
@@ -130,7 +137,6 @@ public class TableService {
     public void saveTableData(SaveTableDataRequest request) {
         String tableName = request.getTableName();
 
-        publisher.publish("Table " + tableName + " has been updated");
 
         List<List<String>> tableData = request.getTableData();
 
@@ -158,6 +164,9 @@ public class TableService {
                 jdbcTemplate.execute(sql);
             }
         }
+
+        KafkaMessageDTO kafkaMessageDTO = new KafkaMessageDTO("Table data saved successfully", "success");
+        kafkaTemplate.send("test", kafkaMessageDTO);
     }
 
     public TableResponse getTableByName(String tableName) {

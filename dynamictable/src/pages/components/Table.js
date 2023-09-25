@@ -50,7 +50,6 @@ function Table(props) {
         axios
             .delete(EndpointConstants.DELETE_TABLE_BY_NAME + name)
             .then((response) => {
-                console.log(response.data);
                 // Call the callback function to update the tables state in the parent component
                 if (deleteTableCallback) {
                     deleteTableCallback(name);
@@ -90,9 +89,7 @@ function Table(props) {
     }
 
     useEffect(() => {
-        console.log("Before fetch table:", name, rows);
         fetchTableData();
-        console.log("After fetch table:", name, rows);
     }, []);
 
     function getTableData() {
@@ -119,14 +116,11 @@ function Table(props) {
 
     function savetableData() {
         var data = getTableData();
-        console.log(data);
         axios.post(EndpointConstants.SAVE_TABLE_DATA, data).then((response) => {
-            console.log(response.data);
         });
     }
 
     function handleExportClick() {
-        console.log("Exporting table:", name);
         axios
             .get(EndpointConstants.EXPORT_TO_EXCEL + name, {
                 responseType: "blob",

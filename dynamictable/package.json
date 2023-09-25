@@ -24,7 +24,10 @@
     "react": "18.2.0",
     "react-data-grid": "^7.0.0-beta.34",
     "react-dom": "18.2.0",
-    "react-table": "^7.8.0"
+    "react-stomp": "^5.1.0",
+    "react-table": "^7.8.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
