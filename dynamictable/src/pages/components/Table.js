@@ -176,13 +176,14 @@ function Table(props) {
                     <EmptyAddRow addRow={addRow} />
                 </div>
             </div>
-            <button onClick={savetableData} className="save-button">
+            <div className="button-container">
+                <button onClick={savetableData} className="save-button">
                 {StringConstants.SAVE_BUTTON}
             </button>
-            <Divider />
-            <button onClick={handleDeleteClick}> Delete Table</button>
-            <Divider />
-            <button onClick={handleExportClick}> Export Table</button>
+                <button onClick={handleDeleteClick} className="delete-button"> Delete Table</button>
+                <button onClick={handleExportClick} className="export-button"> Export Table</button>
+            </div>
+
         </div>
     );
 }

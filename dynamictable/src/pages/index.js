@@ -168,8 +168,8 @@ export default function Home() {
             // subscribe to the "/broadcast" destination
             stompClient.subscribe("/broadcast", function (message) {
                 //when a message is received, show snackbar
-                console.log("Message received: " + message.body);
-                setSnackbarMessage(message);
+                const messageBody = JSON.parse(message.body);
+                setSnackbarMessage(messageBody.message);
                 setIsSnackbarOpen(true);
             });
         });
@@ -188,6 +188,8 @@ export default function Home() {
                 <FormulaModal
                     closeModal={closeFormulaModal}
                     createButton={handleCreateFormula}
+                    handleFileChange={handleFileChange}
+                    importFromExcel={importFromExcel}
                 />
             )}
             {isLoading ? (
@@ -201,13 +203,13 @@ export default function Home() {
                             className="tabs-container"
                         >
                             {tables.map((table, index) => (
-                                <Tab
+                                <Tab style={{display:'flex', justifyContent:'space-around', alignItems:'center'}}
                                     key={table.tableName}
                                     label={
-                                        <div >
-                                            <MoreHorizIcon />
-                                            <MoreVertIcon />
+                                        
+                                        <div>
                                             {table.tableName}
+                                            <MoreVertIcon/>
                                         </div>
                                     }
 
@@ -236,10 +238,6 @@ export default function Home() {
                     ))}
                 </div>
             )}
-            <div>
-                <input type="file" onChange={handleFileChange} accept=".xlsx"></input>
-                <button onClick={importFromExcel}>Import</button>
-            </div>
         </div>
     );
 }

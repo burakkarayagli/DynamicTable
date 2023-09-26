@@ -5,11 +5,12 @@ import { TextField } from "@mui/material";
 import { StringConstants } from "@/constants/StringConstants";
 
 function FormulaModal(props) {
+    const {closeModal, createButton, handleFileChange, importFromExcel} = props;
     return (
         <div
             className="fixed inset-0 bg-black bg-opacity-25 backdrop-opacity-10 flex justify-center items-center"
             id="formula-modal"
-            onClick={props.closeModal}
+            onClick={closeModal}
         >
             <div
                 className="w-[960px] h-[540px] bg-gray-200 p-2 rounded flex flex-col justify-between"
@@ -18,13 +19,17 @@ function FormulaModal(props) {
                 <div className="p-4 flex justify-between">
                     <div className="w-72">
                         <div className="relative h-10 w-full min-w-[200px]">
-                            <TextField id="bfm-name" label={StringConstants.TABLE_NAME} variant= "outlined"/>
+                            <TextField id="bfm-name" label={StringConstants.TABLE_NAME} variant="outlined" />
                         </div>
+                    </div>
+                    <div>
+                        <input type="file" onChange={handleFileChange} accept=".xlsx"></input>
+                        <button onClick={importFromExcel}>Import</button>
                     </div>
                     <button
                         id="close-button"
                         className="text-gray place-self-end justify-end inline"
-                        onClick={props.closeModal}
+                        onClick={closeModal}
                     >
                         <CloseIcon />
                     </button>
@@ -60,12 +65,12 @@ function FormulaModal(props) {
                         variant="contained"
                         color="success"
                         className="bg-green-600 mr-2"
-                        onClick={props.createButton}
+                        onClick={createButton}
                     >
                         {StringConstants.FORMULA_MODAL_CREATE_BUTTON}
                     </Button>
                     <Button
-                        id = "cancel-button"
+                        id="cancel-button"
                         variant="contained"
                         color="error"
                         className="bg-red-600"

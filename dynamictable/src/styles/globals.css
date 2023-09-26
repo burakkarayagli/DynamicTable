@@ -104,8 +104,8 @@
     padding-right: 5px;
 }
 
-.data-row:nth-child(even) .data-cell-input {
-    background-color: #CCCCCC; /* Change this color to your desired green color */
+.data-row:nth-child(odd) .data-cell-input {
+    background-color: #dfb08536; /* Change this color to your desired green color */
   }
 
 .row-container {
@@ -124,4 +124,51 @@
     padding: 8px 12px;
     transition: all 0.2s ease-in-out;
     margin-left: 20px;    
+}
+
+.save-button:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.delete-button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+    margin-left: 20px;    
+}
+
+.delete-button:hover {
+    background-color: #e72828;
+    cursor: pointer;
+}
+
+.export-button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+    margin-left: 20px;    
+}
+
+.export-button:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 10px;
 }

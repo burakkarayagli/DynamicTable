@@ -5,7 +5,7 @@ function ColumnCell(props) {
     return (
         <div
             className="column-cell"
-            style={{ backgroundColor: isInput ? "#10B981" : "#EF4444" }}
+            style={{ backgroundColor: isInput ? "#a5c0e3" : "#dfb085" }}
         >
             <div className="column-cell-header">
                 <h5
