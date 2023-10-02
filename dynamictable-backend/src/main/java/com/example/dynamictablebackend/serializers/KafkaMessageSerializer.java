@@ -1,5 +1,6 @@
-package com.example.dynamictablebackend.kafka;
+package com.example.dynamictablebackend.serializers;
 
+import com.example.dynamictablebackend.kafka.KafkaMessageDTO;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;

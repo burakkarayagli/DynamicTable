@@ -72,9 +72,6 @@ public class TableService {
             //Create TableInfo object
             TableInfo tableInfo = new TableInfo(tableName, columnList);
 
-//            KafkaMessage kafkaMessage = new KafkaMessage("Table created successfully", "success");
-//            publisher.publish(kafkaMessage);
-
             return tableInfo;
 
 
@@ -166,7 +163,7 @@ public class TableService {
         }
 
         KafkaMessageDTO kafkaMessageDTO = new KafkaMessageDTO("Table data saved successfully", "success");
-        kafkaTemplate.send("test", kafkaMessageDTO);
+        publisher.publish(kafkaMessageDTO);
     }
 
     public TableResponse getTableByName(String tableName) {
